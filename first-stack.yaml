@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "Primeira Stack: Cria um S3 Bucket com nome dinâmico e seguro."
+
+Parameters:
+  BucketPrefix:
+    Type: String
+    Description: Prefixo único para o nome do S3 Bucket.
+    MinLength: 3
+    MaxLength: 20
+    Default: "meu-primeiro"
+
+Resources:
+  MyFirstCloudFormationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join 
+        - "-"
+        - - !Ref BucketPrefix
+          - !Ref "AWS::AccountId"
+      
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      
+      Tags:
+        - Key: Name
+          Value: Bucket-CFN-Lab
+        - Key: Ambiente
+          Value: Desenvolvimento
+
+Outputs:
+  BucketName:
+    Description: O nome único do S3 Bucket criado.
+    Value: !Ref MyFirstCloudFormationBucket
+  
+  BucketRegion:
+    Description: A região AWS onde o S3 Bucket está hospedado.
+    Value: !Ref "AWS::Region"
